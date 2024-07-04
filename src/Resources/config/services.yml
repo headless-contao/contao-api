@@ -1,0 +1,8 @@
+services:
+    _defaults:
+        autoconfigure: true
+    Janmarkuslanger\ApiBundle\Controller\ApiController:
+        arguments:
+            - '@database_connection'
+            - '@contao.framework'
+        tags: ['controller.service_arguments']
