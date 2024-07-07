@@ -58,7 +58,11 @@ class ApiController
                 {
                     foreach ($GLOBALS['TL_HOOKS']['JanmarkuslangerApiProcessElement'] as $callback)
                     {
-                        $element = System::importStatic($callback[0])->{$callback[1]}($element, $pageId);
+                        $processedElement = System::importStatic($callback[0])->{$callback[1]}($element, $pageId);
+
+                        if (is_array($processedElement)) {
+                            $element = $processedElement;
+                        }
 
                     }
                 }
