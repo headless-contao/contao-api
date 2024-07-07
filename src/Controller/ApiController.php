@@ -5,6 +5,7 @@ namespace Janmarkuslanger\ApiBundle\Controller;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\System;
 use Doctrine\DBAL\Connection;
+use Janmarkuslanger\ApiBundle\Utils\ElementHelper;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -48,17 +49,26 @@ class ApiController
 
         foreach ($content as &$article) {
             $elementSql = 'SELECT * FROM tl_content WHERE pid = ?';
-            $article['elements'] = $this->db->fetchAllAssociative($elementSql, [$article['id']]);
+            $elements = $this->db->fetchAllAssociative($elementSql, [$article['id']]);
+
+            foreach ($elements as &$element) {
+                $element = ElementHelper::processElement($element);
+
+                if (isset($GLOBALS['TL_HOOKS']['JanmarkuslangerApiProcessElement']) && \is_array($GLOBALS['TL_HOOKS']['JanmarkuslangerApiProcessElement']))
+                {
+                    foreach ($GLOBALS['TL_HOOKS']['JanmarkuslangerApiProcessElement'] as $callback)
+                    {
+                        $element = System::importStatic($callback[0])->{$callback[1]}($element, $pageId);
+
+                    }
+                }
+            }
+
+            $article['elements'] = $elements;
         }
 
-        if (isset($GLOBALS['TL_HOOKS']['apiGetPageContent']) && \is_array($GLOBALS['TL_HOOKS']['apiGetPageContent']))
-        {
-            $this->framework->initialize();
-            foreach ($GLOBALS['TL_HOOKS']['apiGetPageContent'] as $callback)
-            {
-                $content = System::importStatic($callback[0])->{$callback[1]}($content, $pageId);
-            }
-        }
+
+
 
         return new JsonResponse([
             'items' => $content,
