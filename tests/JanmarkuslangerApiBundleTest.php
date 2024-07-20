@@ -10,9 +10,9 @@ declare(strict_types=1);
  * @license LGPL-3.0-or-later
  */
 
-namespace Contao\SkeletonBundle\Tests;
+namespace Janmarkuslanger\ApiBundle\Tests;
 
-use Contao\SkeletonBundle\JanmarkuslangerApiBundle;
+use Janmarkuslanger\ApiBundle\JanmarkuslangerApiBundle;
 use PHPUnit\Framework\TestCase;
 
 class JanmarkuslangerApiBundleTest extends TestCase
