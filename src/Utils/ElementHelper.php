@@ -21,6 +21,13 @@ class ElementHelper
         return \in_array($type, ['text', 'headline', 'image', 'gallery', 'list', 'table', 'hyperlink', 'form', 'article'], true);
     }
 
+    /**
+     * Processes an element array.
+     *
+     * @param array<mixed> $element
+     *
+     * @return array<mixed>
+     */
     public static function processElement(array $element): array
     {
         if (self::isCoreType($element['type'])) {
