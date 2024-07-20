@@ -1,5 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of janmarkuslanger/ApiBundle.
+ *
+ * (c) Jan-Markus Langer
+ *
+ * @license LGPL-3.0-or-later
+ */
+
 namespace Janmarkuslanger\ApiBundle\Controller;
 
 use Contao\CoreBundle\Framework\ContaoFramework;
@@ -14,9 +24,8 @@ class ApiController
 {
     public function __construct(
         private readonly Connection $db,
-        private readonly ContaoFramework $framework
-    )
-    {
+        private readonly ContaoFramework $framework,
+    ) {
         $this->framework->initialize();
     }
 
@@ -28,7 +37,7 @@ class ApiController
 
         return new JsonResponse([
             'items' => $pages,
-            'total' => count($pages)
+            'total' => \count($pages),
         ]);
     }
 
@@ -54,16 +63,13 @@ class ApiController
             foreach ($elements as &$element) {
                 $element = ElementHelper::processElement($element);
 
-                if (isset($GLOBALS['TL_HOOKS']['JanmarkuslangerApiProcessElement']) && \is_array($GLOBALS['TL_HOOKS']['JanmarkuslangerApiProcessElement']))
-                {
-                    foreach ($GLOBALS['TL_HOOKS']['JanmarkuslangerApiProcessElement'] as $callback)
-                    {
+                if (isset($GLOBALS['TL_HOOKS']['JanmarkuslangerApiProcessElement']) && \is_array($GLOBALS['TL_HOOKS']['JanmarkuslangerApiProcessElement'])) {
+                    foreach ($GLOBALS['TL_HOOKS']['JanmarkuslangerApiProcessElement'] as $callback) {
                         $processedElement = System::importStatic($callback[0])->{$callback[1]}($element, $pageId);
 
-                        if (is_array($processedElement)) {
+                        if (\is_array($processedElement)) {
                             $element = $processedElement;
                         }
-
                     }
                 }
             }
@@ -71,12 +77,9 @@ class ApiController
             $article['elements'] = $elements;
         }
 
-
-
-
         return new JsonResponse([
             'items' => $content,
-            'total' => count($content)
+            'total' => \count($content),
         ]);
     }
 }

@@ -7,7 +7,7 @@ declare(strict_types=1);
  *
  * (c) Jan-Markus Langer
  *
- * @license LGPL-3.0
+ * @license LGPL-3.0-or-later
  */
 
 namespace Janmarkuslanger\ApiBundle\ContaoManager;
@@ -17,10 +17,9 @@ use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
 use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
-use Symfony\Component\Config\Loader\LoaderResolverInterface;
 use Janmarkuslanger\ApiBundle\JanmarkuslangerApiBundle;
+use Symfony\Component\Config\Loader\LoaderResolverInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
-
 
 class Plugin implements BundlePluginInterface, RoutingPluginInterface
 {
@@ -35,6 +34,7 @@ class Plugin implements BundlePluginInterface, RoutingPluginInterface
     public function getRouteCollection(LoaderResolverInterface $resolver, KernelInterface $kernel)
     {
         $file = __DIR__.'/../Resources/config/routes.yml';
+
         return $resolver->resolve($file)->load($file);
     }
 }
