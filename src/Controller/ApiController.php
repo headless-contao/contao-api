@@ -74,6 +74,18 @@ class ApiController
     #[Route('/content/{alias}', name: 'content')]
     public function content(string $alias): JsonResponse
     {
+
+        if (isset($GLOBALS['TL_HOOKS']['JanmarkuslangerBeforeFetchContent']) && \is_array($GLOBALS['TL_HOOKS']['JanmarkuslangerBeforeFetchContent'])) {
+
+            foreach ($GLOBALS['TL_HOOKS']['JanmarkuslangerBeforeFetchContent'] as $callback) {
+                $result = System::importStatic($callback[0])->{$callback[1]}($alias);
+
+                if (!$result != false) {
+                    return new JsonResponse($result);
+                }
+            }
+        }
+
         $articleSql = 'SELECT * FROM tl_article a LEFT JOIN tl_page p ON a.pid = p.id WHERE p.alias = ?';
         $content = $this->db->fetchAllAssociative($articleSql, [$alias]);
 
