@@ -32,12 +32,33 @@ class ApiController
     #[Route('/pages', name: 'pages')]
     public function pages(): JsonResponse
     {
+
+        $finalPages = [];
+
         $sql = 'SELECT * FROM tl_page';
         $pages = $this->db->fetchAllAssociative($sql);
 
+        foreach ($pages as $page) {
+            $finalPages[] = [
+                'id' => $page['id'],
+                'title' => $page['title'],
+                'alias' => $page['alias']
+            ];
+        }
+
+        if (isset($GLOBALS['TL_HOOKS']['JanmarkuslangerApiCollectPages']) && \is_array($GLOBALS['TL_HOOKS']['JanmarkuslangerApiCollectPages'])) {
+            foreach ($GLOBALS['TL_HOOKS']['JanmarkuslangerApiCollectPages'] as $callback) {
+                $processedPages = System::importStatic($callback[0])->{$callback[1]}($finalPages);
+
+                if (\is_array($processedPages)) {
+                    $finalPages = array_merge($finalPages, $processedPages);
+                }
+            }
+        }
+
         return new JsonResponse([
-            'items' => $pages,
-            'total' => \count($pages),
+            'items' => $finalPages,
+            'total' => \count($finalPages),
         ]);
     }
 
