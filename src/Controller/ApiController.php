@@ -62,20 +62,20 @@ class ApiController
         ]);
     }
 
-    #[Route('/page/{id}', name: 'page')]
-    public function page(int $id): JsonResponse
+    #[Route('/page/{alias}', name: 'page')]
+    public function page(string $alias): JsonResponse
     {
-        $sql = 'SELECT * FROM tl_page WHERE id = ?';
-        $page = $this->db->fetchAssociative($sql, [$id]);
+        $sql = 'SELECT * FROM tl_page WHERE alias = ?';
+        $page = $this->db->fetchAssociative($sql, [$alias]);
 
         return new JsonResponse($page);
     }
 
-    #[Route('/content/{pageId}', name: 'content')]
-    public function content(int $pageId): JsonResponse
+    #[Route('/content/{alias}', name: 'content')]
+    public function content(string $alias): JsonResponse
     {
-        $articleSql = 'SELECT * FROM tl_article WHERE pid = ?';
-        $content = $this->db->fetchAllAssociative($articleSql, [$pageId]);
+        $articleSql = 'SELECT * FROM tl_article a LEFT JOIN tl_page p ON a.pid = p.id WHERE p.alias = ?';
+        $content = $this->db->fetchAllAssociative($articleSql, [$alias]);
 
         foreach ($content as &$article) {
             $elementSql = 'SELECT * FROM tl_content WHERE pid = ?';
